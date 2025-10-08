@@ -33,8 +33,8 @@ class _TranslateScreenState extends State<TranslateScreen> {
 
     await flutterTts.setLanguage(_mapLang(lang));
     await flutterTts.setVolume(1.0);      // max volume
-    await flutterTts.setSpeechRate(0.9);  // tốc độ đọc
-    await flutterTts.setPitch(1.0);       // cao độ giọng
+    await flutterTts.setSpeechRate(0.5);  // tốc độ đọc
+    await flutterTts.setPitch(0.8);       // cao độ giọng
 
     await flutterTts.speak(text);
   }
