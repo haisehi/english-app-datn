@@ -98,6 +98,7 @@ class AuthService {
       await prefs.remove('refresh_token');
       await prefs.remove('role');
       await prefs.remove('full_name_user');
+      await prefs.remove('id_user');
       return true;
     }else{
       return false;

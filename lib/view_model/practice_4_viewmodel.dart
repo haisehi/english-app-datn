@@ -4,10 +4,15 @@ import 'package:english_learning_app/view_model/lesson_viewmodel.dart';
 import 'package:english_learning_app/views/widget/dialog/show_result_practice_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:english_learning_app/models/vocabulary_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/attendance_service.dart';
+import '../views/screens/student/attendance_screen.dart';
 
 class Practice4ViewModel extends ChangeNotifier {
   final List<VocabularyModel> _vocabList;
   final LessonViewModel lessonViewModel = LessonViewModel();
+  final AttendanceService attendanceService = AttendanceService();
   final int courseID;
   final int lessionID;
   final double oldProgress;
@@ -47,24 +52,18 @@ class Practice4ViewModel extends ChangeNotifier {
       _feedbackText = "";
       notifyListeners();
     } else {
-      _showResult(context);
+      showResult(context);
     }
   }
 
-  // Hàm hiển thị kết quả
-  void _showResult(BuildContext context) {
+  // ✅ Hiển thị kết quả + chuyển sang trang điểm danh
+  void showResult(BuildContext context) async {
     double completionRate = (score / _vocabList.length) * 100;
     bool isCompleted = completionRate >= 80;
-    // Hiển thị dialog kết quả
     double completionProgress = min(completionRate, 25);
-
-
     double newProgress = oldProgress + completionProgress;
-    if(newProgress > 100){
-      newProgress = 100;
-    }
+    if (newProgress > 100) newProgress = 100;
 
-    // Hiển thị kết quả
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -76,10 +75,22 @@ class Practice4ViewModel extends ChangeNotifier {
           resetQuiz();
         },
         onComplete: () async {
+          // Cập nhật tiến độ học
           await lessonViewModel.updateProcess(courseID, lessionID, newProgress);
 
-          Navigator.of(context).pop(); // Đóng dialog
-          Navigator.of(context).pop(); // Đóng PracticeScreen2
+          // Lấy userId
+          final prefs = await SharedPreferences.getInstance();
+          final userId = prefs.getInt("id_user") ?? 1;
+
+          // Đóng dialog
+          Navigator.of(context).pop();
+
+          // ✅ Chuyển sang màn hình AttendanceScreen để điểm danh
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => AttendanceScreen(userId: userId),
+            ),
+          );
         },
       ),
     );

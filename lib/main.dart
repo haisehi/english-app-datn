@@ -10,6 +10,7 @@ import 'package:english_learning_app/view_model/practice_3_viewmodel.dart';
 import 'package:english_learning_app/view_model/statistics_score_viewmodel.dart';
 import 'package:english_learning_app/view_model/translate_viewmodel.dart';
 import 'package:english_learning_app/view_model/vocabulary_viewmodel.dart';
+import 'package:english_learning_app/view_model/attendance_viewmodel.dart'; // ✅ Thêm dòng này
 import 'package:english_learning_app/views/screens/get_start_screen.dart';
 import 'package:english_learning_app/views/screens/splash_screen.dart';
 import 'package:english_learning_app/views/screens/student/chat_ai_screen.dart';
@@ -28,14 +29,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  // await prefs.setString('access_token', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJob2FuZ21pbmhAZ21haWwuY29tIiwiaWF0IjoxNzM0ODU5NzY2LCJleHAiOjE3MzQ5NDYxNjZ9._cYvF1UZamA6VELVcl_JMdVUhE43MV121k7qqpHe654');
   Gemini.init(apiKey: GEMINI_API_KEY);
   runApp(
     MultiProvider(
@@ -44,13 +42,12 @@ void main() async {
         ChangeNotifierProvider(create: (_) => MyCourseViewmodel()),
         ChangeNotifierProvider(create: (_) => LessonViewModel()),
         ChangeNotifierProvider(create: (_) => VocabularyViewmodel()),
-        Provider<ExamDetailViewmodel>(create: (_) => ExamDetailViewmodel()),
-        // Thêm các provider khác ở đây nếu có
         ChangeNotifierProvider(create: (_) => ExamListViewmodel()),
         ChangeNotifierProvider(create: (_) => StatisticsScoreViewmodel()),
-
+        ChangeNotifierProvider(create: (_) => AttendanceViewModel()), // ✅ Thêm provider này
+        Provider<ExamDetailViewmodel>(create: (_) => ExamDetailViewmodel()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -58,37 +55,35 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
 
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'English Learning App',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        initialRoute: '/splash',
-        routes: {
-          '/splash': (context) => SplashScreen(),
-          '/login': (context) => LoginScreen(),
-          '/student': (context) => StudentNavigation(),
-          '/teacher': (context) => TeacherNavigation(),
-          '/my-vocabulary': (context) => MyVocabularyScreen(),
-          '/speaking-practice': (context) => SpeakingPracticeScreen(),
-
-          // '/course-detail': (context) => CourseDetailScreen(),
-          '/get-start': (context) => GetStartScreen(),
-          '/reminder': (context) => ReminderScreen(),
-          '/chat-ai': (context) => ChatAiScreen(),
-        },
-      
-      );
+      debugShowCheckedModeBanner: false,
+      title: 'English Learning App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      initialRoute: '/splash',
+      routes: {
+        '/splash': (context) => SplashScreen(),
+        '/login': (context) => LoginScreen(),
+        '/student': (context) => StudentNavigation(),
+        '/teacher': (context) => TeacherNavigation(),
+        '/my-vocabulary': (context) => MyVocabularyScreen(),
+        '/speaking-practice': (context) => SpeakingPracticeScreen(),
+        '/get-start': (context) => GetStartScreen(),
+        '/reminder': (context) => ReminderScreen(),
+        '/chat-ai': (context) => ChatAiScreen(),
+      },
+    );
   }
 }
 
 class StudentNavigation extends StatefulWidget {
+  const StudentNavigation({super.key});
+
   @override
   _StudentNavigationState createState() => _StudentNavigationState();
 }
@@ -105,9 +100,7 @@ class _StudentNavigationState extends State<StudentNavigation> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
   }
 
   @override
@@ -118,8 +111,8 @@ class _StudentNavigationState extends State<StudentNavigation> {
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: Colors.blue, // Màu viền bạn muốn
-              width: 2.0, // Độ dày của viền
+              color: Colors.blue,
+              width: 2.0,
             ),
           ),
         ),
@@ -159,7 +152,6 @@ class _StudentNavigationState extends State<StudentNavigation> {
                 selectedIcon: Icon(Icons.record_voice_over),
                 label: "Luyện nói",
               ),
-
               NavigationDestination(
                 icon: Icon(Icons.translate_outlined),
                 selectedIcon: Icon(Icons.translate_rounded),
@@ -179,6 +171,8 @@ class _StudentNavigationState extends State<StudentNavigation> {
 }
 
 class TeacherNavigation extends StatefulWidget {
+  const TeacherNavigation({super.key});
+
   @override
   _TeacherNavigationState createState() => _TeacherNavigationState();
 }
@@ -188,15 +182,10 @@ class _TeacherNavigationState extends State<TeacherNavigation> {
 
   final List<Widget> _pages = [
     HomeTeacherScreen(),
-    // CourseManagementScreen(),
     ProfileScreen(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  void _onItemTapped(int index) => setState(() => _selectedIndex = index);
 
   @override
   Widget build(BuildContext context) {
@@ -207,13 +196,9 @@ class _TeacherNavigationState extends State<TeacherNavigation> {
         onDestinationSelected: _onItemTapped,
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: "Trang chủ"),
-          NavigationDestination(icon: Icon(Icons.class_rounded), label: "Khóa học"),
           NavigationDestination(icon: Icon(Icons.person), label: "Hồ sơ"),
         ],
       ),
     );
   }
 }
-
-
-
