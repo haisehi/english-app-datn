@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-
-import '../../constrants/app_colors.dart'; // Nhớ đảm bảo AppColors đã được cập nhật
+import '../../constrants/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   final List<_SplashContent> _pages = [
     _SplashContent(
-      image: 'assets/images/logo.png', // Đặt tên ảnh ở đây
+      image: 'assets/images/logo.png',
       title: 'MeoV',
       subtitle: '',
     ),
@@ -37,23 +35,19 @@ class _SplashScreenState extends State<SplashScreen> {
     ),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (_currentPage < _pages.length - 1) {
+  void _nextPage() {
+    if (_currentPage < _pages.length - 1) {
+      setState(() {
         _currentPage++;
-        _pageController.animateToPage(
-          _currentPage,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      } else {
-        timer.cancel();
-        // Sau khi xong splash, bạn chuyển sang màn home/login
-        Navigator.of(context).pushReplacementNamed('/login');
-      }
-    });
+      });
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   @override
@@ -64,45 +58,83 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLastPage = _currentPage == _pages.length - 1;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: PageView.builder(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _pages.length,
-          itemBuilder: (context, index) {
-            final content = _pages[index];
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                Image.asset(
-                  content.image,
-                  height: 200,
-                ),
-                const SizedBox(height: 40),
-                Text(
-                  content.title,
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _pages.length,
+              onPageChanged: (index) {
+                setState(() => _currentPage = index);
+              },
+              itemBuilder: (context, index) {
+                final content = _pages[index];
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 40),
+                    Image.asset(
+                      content.image,
+                      height: 200,
+                    ),
+                    const SizedBox(height: 40),
+                    Text(
+                      content.title,
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      content.subtitle,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: AppColors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                );
+              },
+            ),
+
+            // ✅ Nút ở giữa phía dưới
+            Positioned(
+              bottom: 40,
+              left: 24,
+              right: 24,
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _nextPage,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  content.subtitle,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: AppColors.textSecondary,
+                  child: Text(
+                    isLastPage ? 'BẮT ĐẦU' : 'TIẾP THEO',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.background,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );
