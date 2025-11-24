@@ -20,7 +20,7 @@ import 'package:english_learning_app/views/screens/student/home_student_screen.d
 import 'package:english_learning_app/views/screens/student/my_vocabulary_screen.dart';
 import 'package:english_learning_app/views/screens/profile_screen.dart';
 import 'package:english_learning_app/views/screens/student/reminder_screen.dart';
-import 'package:english_learning_app/views/screens/student/speaking_practice_screen.dart';
+import 'package:english_learning_app/views/screens/student/speaking_topic_screen.dart';
 import 'package:english_learning_app/views/screens/student/statistics_screen.dart';
 import 'package:english_learning_app/views/screens/student/translate_screen.dart';
 import 'package:english_learning_app/views/screens/teacher/course_management_screen.dart';
@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
         '/student': (context) => StudentNavigation(),
         '/teacher': (context) => TeacherNavigation(),
         '/my-vocabulary': (context) => MyVocabularyScreen(),
-        '/speaking-practice': (context) => SpeakingPracticeScreen(),
+        '/speaking-practice': (context) => SpeakingTopicScreen(),
         '/get-start': (context) => GetStartScreen(),
         '/reminder': (context) => ReminderScreen(),
         '/chat-ai': (context) => ChatAiScreen(),
@@ -94,7 +94,7 @@ class _StudentNavigationState extends State<StudentNavigation> {
   static final List<Widget> _screens = [
     HomeStudentScreen(),
     CourseScreen(),
-    SpeakingPracticeScreen(),
+    SpeakingTopicScreen(),
     TranslateScreen(),
     ProfileScreen(),
   ];

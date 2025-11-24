@@ -1,0 +1,2 @@
+D:/VKU/doantotnghiep/english_learning_app-main/android/app/.cxx/Debug/s4h171o3/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/VKU/doantotnghiep/english_learning_app-main/android/app/.cxx/Debug/s4h171o3/arm64-v8a/CMakeFiles/rebuild_cache.dir

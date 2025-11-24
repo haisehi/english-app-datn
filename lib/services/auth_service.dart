@@ -125,4 +125,10 @@ class AuthService {
       return false;
     }
   }
+
+  Future<String?> getAccessToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("access_token");
+  }
+
 }
