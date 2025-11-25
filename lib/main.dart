@@ -10,7 +10,7 @@ import 'package:english_learning_app/view_model/practice_3_viewmodel.dart';
 import 'package:english_learning_app/view_model/statistics_score_viewmodel.dart';
 import 'package:english_learning_app/view_model/translate_viewmodel.dart';
 import 'package:english_learning_app/view_model/vocabulary_viewmodel.dart';
-import 'package:english_learning_app/view_model/attendance_viewmodel.dart'; // ✅ Thêm dòng này
+import 'package:english_learning_app/view_model/attendance_viewmodel.dart';
 import 'package:english_learning_app/views/screens/get_start_screen.dart';
 import 'package:english_learning_app/views/screens/splash_screen.dart';
 import 'package:english_learning_app/views/screens/student/chat_ai_screen.dart';
@@ -23,8 +23,6 @@ import 'package:english_learning_app/views/screens/student/reminder_screen.dart'
 import 'package:english_learning_app/views/screens/student/speaking_topic_screen.dart';
 import 'package:english_learning_app/views/screens/student/statistics_screen.dart';
 import 'package:english_learning_app/views/screens/student/translate_screen.dart';
-import 'package:english_learning_app/views/screens/teacher/course_management_screen.dart';
-import 'package:english_learning_app/views/screens/teacher/home_teacher_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:provider/provider.dart';
@@ -181,7 +179,6 @@ class _TeacherNavigationState extends State<TeacherNavigation> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    HomeTeacherScreen(),
     ProfileScreen(),
   ];
 
