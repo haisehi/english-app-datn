@@ -1,7 +1,9 @@
+import 'package:english_learning_app/views/screens/student/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:english_learning_app/constrants/app_colors.dart';
 import 'package:english_learning_app/view_model/login_viewmodel.dart';
+import '../../localization/app_localizations.dart';
 import 'profile_detail_screen.dart';
 import '../../models/leaderboard_model.dart';
 import '../../services/leaderboard_service.dart';
@@ -81,12 +83,13 @@ class _ProfileState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     final LoginViewModel viewModel = LoginViewModel();
+    final loc = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          // 🟣 Header với avatar + thông tin
+          // 🟣 Header
           Container(
             height: MediaQuery.of(context).size.height * 0.33,
             width: double.infinity,
@@ -150,7 +153,7 @@ class _ProfileState extends State<ProfileScreen>
             ),
           ),
 
-          // 🟢 Nội dung chính
+          // 🟢 Main Content
           Expanded(
             child: RefreshIndicator(
               onRefresh: _fetchLeaderboard,
@@ -160,9 +163,8 @@ class _ProfileState extends State<ProfileScreen>
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 children: [
                   const SizedBox(height: 10),
-                  // 🎯 Tiêu đề bảng xếp hạng
                   Text(
-                    "🏆 Bảng xếp hạng người học",
+                    "🏆 ${loc.tr('leaderboard')}",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -171,7 +173,6 @@ class _ProfileState extends State<ProfileScreen>
                   ),
                   const SizedBox(height: 12),
 
-                  // 🌈 Bảng xếp hạng nổi bật
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -196,11 +197,11 @@ class _ProfileState extends State<ProfileScreen>
                       child: isLoading
                           ? const Center(child: CircularProgressIndicator())
                           : leaderboard.isEmpty
-                          ? const Center(
+                          ? Center(
                         child: Text(
-                          "Không có dữ liệu.",
-                          style:
-                          TextStyle(color: Colors.grey, fontSize: 16),
+                          loc.tr("no_data"),
+                          style: const TextStyle(
+                              color: Colors.grey, fontSize: 16),
                         ),
                       )
                           : AnimatedBuilder(
@@ -226,9 +227,8 @@ class _ProfileState extends State<ProfileScreen>
                   ),
 
                   const SizedBox(height: 25),
-                  // ⚙️ Menu chức năng
                   Text(
-                    "⚙️ Cài đặt & Tùy chọn",
+                    "⚙️ ${loc.tr('settings_and_options')}",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -237,7 +237,7 @@ class _ProfileState extends State<ProfileScreen>
                   ),
                   const SizedBox(height: 10),
 
-                  _buildMenuItem(Icons.person, "Thông tin cá nhân", () {
+                  _buildMenuItem(Icons.person, loc.tr("profile_detail"), () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -245,9 +245,21 @@ class _ProfileState extends State<ProfileScreen>
                       ),
                     );
                   }),
-                  _buildMenuItem(Icons.settings, "Cài đặt", () {}),
-                  _buildMenuItem(Icons.info_outline, "Giới thiệu", () {}),
-                  _buildMenuItem(Icons.logout, "Đăng xuất", () {
+
+                  // ✔ Sửa nút cài đặt đúng UI
+                  _buildMenuItem(Icons.settings, loc.tr("setting"), () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SettingScreen(),
+                      ),
+                    );
+                  }),
+
+                  // Giữ nguyên design "Giới thiệu"
+                  _buildMenuItem(Icons.info_outline, loc.tr("about"), () {}),
+
+                  _buildMenuItem(Icons.logout, loc.tr("logout"), () {
                     viewModel.logout(context);
                   }, color: Colors.redAccent),
                 ],
@@ -259,7 +271,6 @@ class _ProfileState extends State<ProfileScreen>
     );
   }
 
-  // 🧩 Card từng người trong bảng xếp hạng (giống Duolingo)
   Widget _buildLeaderboardCard(LeaderboardModel item) {
     bool isValidUrl = item.avatar.startsWith('http://') ||
         item.avatar.startsWith('https://');
@@ -267,13 +278,13 @@ class _ProfileState extends State<ProfileScreen>
     Color rankColor;
     switch (item.rank) {
       case 1:
-        rankColor = const Color(0xFFFFD700); // Vàng
+        rankColor = const Color(0xFFFFD700);
         break;
       case 2:
-        rankColor = const Color(0xFFC0C0C0); // Bạc
+        rankColor = const Color(0xFFC0C0C0);
         break;
       case 3:
-        rankColor = const Color(0xFFCD7F32); // Đồng
+        rankColor = const Color(0xFFCD7F32);
         break;
       default:
         rankColor = Colors.grey.shade300;
@@ -294,7 +305,8 @@ class _ProfileState extends State<ProfileScreen>
                 radius: 27,
                 backgroundImage: isValidUrl
                     ? NetworkImage(item.avatar)
-                    : const AssetImage("assets/images/user.jpg") as ImageProvider,
+                    : const AssetImage("assets/images/user.jpg")
+                as ImageProvider,
               ),
               if (item.rank <= 3)
                 Container(
@@ -326,7 +338,7 @@ class _ProfileState extends State<ProfileScreen>
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           subtitle: Text(
-            "Điểm: ${item.totalScore.toStringAsFixed(1)}",
+            "${AppLocalizations.of(context).tr("score")}: ${item.totalScore.toStringAsFixed(1)}",
             style: const TextStyle(color: Colors.black54),
           ),
           trailing: Text(
@@ -342,7 +354,6 @@ class _ProfileState extends State<ProfileScreen>
     );
   }
 
-  // 🧭 Menu phụ
   Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap,
       {Color? color}) {
     return Padding(
@@ -367,8 +378,8 @@ class _ProfileState extends State<ProfileScreen>
               fontWeight: FontWeight.w500,
             ),
           ),
-          trailing:
-          Icon(Icons.chevron_right, color: Colors.grey[500], size: 20),
+          trailing: Icon(Icons.chevron_right,
+              color: Colors.grey[500], size: 20),
           onTap: onTap,
         ),
       ),

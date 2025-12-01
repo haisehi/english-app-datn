@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constrants/app_colors.dart';
+import 'language_select_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,18 +38,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _nextPage() {
     if (_currentPage < _pages.length - 1) {
-      setState(() {
-        _currentPage++;
-      });
+      setState(() => _currentPage++);
       _pageController.animateToPage(
         _currentPage,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.of(context).pushReplacementNamed('/login');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const LanguageSelectScreen()),
+      );
     }
   }
+
 
   @override
   void dispose() {
@@ -106,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen> {
               },
             ),
 
-            // ✅ Nút ở giữa phía dưới
+            // Nút ở giữa phía dưới
             Positioned(
               bottom: 40,
               left: 24,
@@ -123,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                   child: Text(
-                    isLastPage ? 'BẮT ĐẦU' : 'TIẾP THEO',
+                    isLastPage ? 'START' : 'CONTINUE',
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.background,

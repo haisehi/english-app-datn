@@ -3,6 +3,7 @@ import 'package:english_learning_app/view_model/login_viewmodel.dart';
 import 'package:english_learning_app/views/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../localization/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,17 +26,16 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo
                 Image.asset(
-                  'assets/images/logo.png', // Đổi logo tại đây
+                  'assets/images/logo.png',
                   height: 120,
                 ),
                 const SizedBox(height: 32),
 
-                // Title
-                const Text(
-                  'Chào mừng bạn!',
-                  style: TextStyle(
+                // 🔹 Title
+                Text(
+                  AppLocalizations.of(context).tr("welcome"),
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Roboto',
@@ -43,9 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Đăng nhập để tiếp tục học tiếng Anh',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context).tr("login_subtitle"),
+                  style: const TextStyle(
                     fontSize: 14,
                     fontFamily: 'Roboto',
                     color: AppColors.textSecondary,
@@ -53,14 +53,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Email Field
+                // 🔹 Email Field
                 TextField(
                   onChanged: (value) => viewModel.email = value,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: const TextStyle(fontFamily: 'Roboto'),
-                    hintText: 'example@gmail.com',
+                    labelText: AppLocalizations.of(context).tr("email"),
+                    hintText: "example@gmail.com",
                     prefixIcon: const Icon(Icons.email),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -69,13 +68,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password Field
+                // 🔹 Password Field
                 TextField(
                   onChanged: (value) => viewModel.password = value,
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: 'Mật khẩu',
-                    labelStyle: const TextStyle(fontFamily: 'Roboto'),
+                    labelText: AppLocalizations.of(context).tr("password"),
                     prefixIcon: const Icon(Icons.lock),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -84,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Login Button
+                // 🔹 Login Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -96,9 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'ĐĂNG NHẬP',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context).tr("login"),
+                      style: const TextStyle(
                         fontSize: 16,
                         color: AppColors.background,
                         fontFamily: 'Roboto',
@@ -107,53 +105,45 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                // đăng nhập bằng bên thứ 3
-                Column(
+                const SizedBox(height: 20),
+
+                // 🔹 Social Login Text
+                Text(
+                  AppLocalizations.of(context).tr("login_with"),
+                  style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 10),
+
+                // 🔹 Social Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Hoặc đăng nhập với",
-                      style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                    IconButton(
+                      icon: const FaIcon(FontAwesomeIcons.google, color: AppColors.red),
+                      onPressed: () {},
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const FaIcon(FontAwesomeIcons.google, color: AppColors.red),
-                          onPressed: () {
-                            // TODO: Xử lý đăng nhập Google
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        IconButton(
-                          icon: const FaIcon(FontAwesomeIcons.facebook, color: AppColors.primary),
-                          onPressed: () {
-                            // TODO: Xử lý đăng nhập Facebook
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        IconButton(
-                          icon: const FaIcon(FontAwesomeIcons.discord, color: Colors.indigo),
-                          onPressed: () {
-                            // TODO: Xử lý đăng nhập Discord
-                          },
-                        ),
-                      ],
+                    const SizedBox(width: 20),
+                    IconButton(
+                      icon: const FaIcon(FontAwesomeIcons.facebook, color: AppColors.primary),
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 20),
+                    IconButton(
+                      icon: const FaIcon(FontAwesomeIcons.discord, color: Colors.indigo),
+                      onPressed: () {},
                     ),
                   ],
                 ),
 
-                // Links
+                // 🔹 Register Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
                       onPressed: _onClickRegister,
-                      child: const Text(
-                        "Đăng ký",
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context).tr("register"),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           fontFamily: 'Roboto',
@@ -163,13 +153,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
+
+                // 🔹 Forgot Password
                 TextButton(
-                  onPressed: () {
-                    // TODO: Thêm chức năng quên mật khẩu nếu có
-                  },
-                  child: const Text(
-                    "Quên mật khẩu?",
-                    style: TextStyle(
+                  onPressed: () {},
+                  child: Text(
+                    AppLocalizations.of(context).tr("forgot_password"),
+                    style: const TextStyle(
                       color: Colors.redAccent,
                       fontSize: 16,
                       fontFamily: 'Roboto',

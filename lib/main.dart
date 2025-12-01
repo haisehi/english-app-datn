@@ -29,6 +29,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
+import 'localization/app_localizations.dart';
+import 'localization/locale_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
@@ -36,13 +41,14 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => TranslateViewModel()),
         ChangeNotifierProvider(create: (_) => MyCourseViewmodel()),
         ChangeNotifierProvider(create: (_) => LessonViewModel()),
         ChangeNotifierProvider(create: (_) => VocabularyViewmodel()),
         ChangeNotifierProvider(create: (_) => ExamListViewmodel()),
         ChangeNotifierProvider(create: (_) => StatisticsScoreViewmodel()),
-        ChangeNotifierProvider(create: (_) => AttendanceViewModel()), // ✅ Thêm provider này
+        ChangeNotifierProvider(create: (_) => AttendanceViewModel()), // Thêm provider này
         Provider<ExamDetailViewmodel>(create: (_) => ExamDetailViewmodel()),
       ],
       child: const MyApp(),
@@ -55,10 +61,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'English Learning App',
+      locale: localeProvider.locale,
+      supportedLocales: const [
+        Locale('vi'),
+        Locale('en'),
+      ],
+      localizationsDelegates: const [
+        AppLocalizationDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -68,7 +86,6 @@ class MyApp extends StatelessWidget {
         '/splash': (context) => SplashScreen(),
         '/login': (context) => LoginScreen(),
         '/student': (context) => StudentNavigation(),
-        '/teacher': (context) => TeacherNavigation(),
         '/my-vocabulary': (context) => MyVocabularyScreen(),
         '/speaking-practice': (context) => SpeakingTopicScreen(),
         '/get-start': (context) => GetStartScreen(),
@@ -103,6 +120,7 @@ class _StudentNavigationState extends State<StudentNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    var loc = AppLocalizations.of(context);
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
@@ -133,68 +151,31 @@ class _StudentNavigationState extends State<StudentNavigation> {
           ),
           child: NavigationBar(
             selectedIndex: _selectedIndex,
-            onDestinationSelected: _onItemTapped,
-            destinations: const [
+            onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+            destinations: [
               NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: "Trang chủ",
+                icon: Icon(Icons.home),
+                label: loc.tr("home"),
               ),
               NavigationDestination(
-                icon: Icon(Icons.class_outlined),
-                selectedIcon: Icon(Icons.class_rounded),
-                label: "Khóa học",
+                icon: Icon(Icons.class_),
+                label: loc.tr("course"),
               ),
               NavigationDestination(
-                icon: Icon(Icons.record_voice_over_outlined),
-                selectedIcon: Icon(Icons.record_voice_over),
-                label: "Luyện nói",
+                icon: Icon(Icons.mic),
+                label: loc.tr("speaking"),
               ),
               NavigationDestination(
-                icon: Icon(Icons.translate_outlined),
-                selectedIcon: Icon(Icons.translate_rounded),
-                label: "Dịch",
+                icon: Icon(Icons.translate),
+                label: loc.tr("translate"),
               ),
               NavigationDestination(
-                icon: Icon(Icons.person_outline),
-                selectedIcon: Icon(Icons.person),
-                label: "Hồ sơ",
+                icon: Icon(Icons.person),
+                label: loc.tr("profile"),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class TeacherNavigation extends StatefulWidget {
-  const TeacherNavigation({super.key});
-
-  @override
-  _TeacherNavigationState createState() => _TeacherNavigationState();
-}
-
-class _TeacherNavigationState extends State<TeacherNavigation> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    ProfileScreen(),
-  ];
-
-  void _onItemTapped(int index) => setState(() => _selectedIndex = index);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _onItemTapped,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: "Trang chủ"),
-          NavigationDestination(icon: Icon(Icons.person), label: "Hồ sơ"),
-        ],
       ),
     );
   }

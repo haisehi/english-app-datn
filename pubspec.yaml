@@ -35,6 +35,8 @@ dependencies:
   percent_indicator: ^4.2.3
   avatar_glow: ^2.0.2
 
+  flutter_localizations:
+    sdk: flutter
 
   flutter:
     sdk: flutter
@@ -92,6 +94,7 @@ flutter:
     - assets/images/
     - assets/animations/
     - assets/animations2/
+    - assets/lang/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
