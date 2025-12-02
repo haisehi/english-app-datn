@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import '../../../localization/app_localizations.dart';
 
 class TranslateScreen extends StatefulWidget {
   const TranslateScreen({super.key});
@@ -23,6 +24,10 @@ class _TranslateScreenState extends State<TranslateScreen> {
         return "en-US";
       case "vi":
         return "vi-VN";
+      case "ja":
+        return "ja-JP";
+      case "ko":
+        return "ko-KR";
       default:
         return "en-US";
     }
@@ -30,24 +35,23 @@ class _TranslateScreenState extends State<TranslateScreen> {
 
   Future _speak(String text, String lang) async {
     if (text.isEmpty) return;
-
     await flutterTts.setLanguage(_mapLang(lang));
     await flutterTts.setVolume(1.0);      // max volume
     await flutterTts.setSpeechRate(0.5);  // tốc độ đọc
     await flutterTts.setPitch(0.8);       // cao độ giọng
-
     await flutterTts.speak(text);
   }
 
   @override
   Widget build(BuildContext context) {
     final translateViewModel = Provider.of<TranslateViewModel>(context);
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          "Dịch Từ Vựng",
+        title: Text(
+          loc.tr("translate_vocab"),
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -73,9 +77,9 @@ class _TranslateScreenState extends State<TranslateScreen> {
               // Ô nhập văn bản
               TextField(
                 decoration: InputDecoration(
-                  labelText: "Nhập từ vựng",
+                  labelText: loc.tr("enter_vocab"),
                   labelStyle: TextStyle(color: accentColor),
-                  hintText: "Ví dụ: Hello",
+                  hintText: loc.tr("example_hello"),
                   filled: true,
                   fillColor: Colors.grey.shade100,
                   border: OutlineInputBorder(
@@ -99,7 +103,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildLanguageDropdown(
-                    "Từ",
+                    loc.tr("from"),
                     translateViewModel.inputLanguage,
                         (value) {
                       if (value != null) {
@@ -107,7 +111,6 @@ class _TranslateScreenState extends State<TranslateScreen> {
                       }
                     },
                   ),
-                  // Đổi chiều ngôn ngữ
                   IconButton(
                     icon: Icon(Icons.compare_arrows,
                         color: accentColor, size: 30),
@@ -121,7 +124,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
                     },
                   ),
                   _buildLanguageDropdown(
-                    "Sang",
+                    loc.tr("to"),
                     translateViewModel.outputLanguage,
                         (value) {
                       if (value != null) {
@@ -145,9 +148,9 @@ class _TranslateScreenState extends State<TranslateScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   elevation: 3,
                 ),
-                child: const Text(
-                  "Dịch",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                child: Text(
+                  loc.tr("translate"),
+                  style: const TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
 
@@ -166,7 +169,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
                     Expanded(
                       child: Text(
                         translateViewModel.outputText.isEmpty
-                            ? "Kết quả sẽ hiển thị ở đây..."
+                            ? loc.tr("result_will_show_here")
                             : translateViewModel.outputText,
                         style: const TextStyle(
                           fontSize: 16,
@@ -220,6 +223,8 @@ class _TranslateScreenState extends State<TranslateScreen> {
             items: const [
               DropdownMenuItem(value: 'en', child: Text('English')),
               DropdownMenuItem(value: 'vi', child: Text('Vietnamese')),
+              DropdownMenuItem(value: 'ja', child: Text('Japanese')),
+              DropdownMenuItem(value: 'ko', child: Text('Korean')),
             ],
             onChanged: onChanged,
             underline: const SizedBox(),

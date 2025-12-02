@@ -7,6 +7,8 @@ import 'package:english_learning_app/views/screens/student/practice_4_screen.dar
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../localization/app_localizations.dart';
+
 class PracticeDialog extends StatefulWidget {
   final double oldProgress;
   final List<VocabularyModel> vocabList;
@@ -27,15 +29,22 @@ class _PracticeDialogState extends State<PracticeDialog> {
   @override
   void initState() {
     super.initState();
-    _initializeExercises();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeExercises(); // Dùng được context ở đây
+  }
+
+
   void _initializeExercises() {
+    final loc = AppLocalizations.of(context)!;
     practiceExercises = [
-      {"title": "Bài 1", "isComplete": widget.oldProgress >= 20},
-      {"title": "Bài 2", "isComplete": widget.oldProgress >= 40},
-      {"title": "Bài 3", "isComplete": widget.oldProgress >= 60},
-      {"title": "Bài 4", "isComplete": widget.oldProgress >= 85},
+      {"title": "${loc.tr("exercises")} 1", "isComplete": widget.oldProgress >= 20},
+      {"title": "${loc.tr("exercises")} 2", "isComplete": widget.oldProgress >= 40},
+      {"title": "${loc.tr("exercises")} 3", "isComplete": widget.oldProgress >= 60},
+      {"title": "${loc.tr("exercises")} 4", "isComplete": widget.oldProgress >= 85},
     ];
   }
 
@@ -68,6 +77,7 @@ class _PracticeDialogState extends State<PracticeDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
@@ -81,7 +91,7 @@ class _PracticeDialogState extends State<PracticeDialog> {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               title: Text(
-                'Bài luyện tập',
+                loc.tr("exercises"),
                 style: TextStyle(color: Colors.white.withOpacity(0.8)),
               ),
               centerTitle: true,

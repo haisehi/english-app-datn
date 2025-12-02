@@ -1,17 +1,11 @@
 import 'package:english_learning_app/constrants/app_colors.dart';
-import 'package:english_learning_app/models/exam_model.dart';
-import 'package:english_learning_app/models/lesson_model.dart';
-import 'package:english_learning_app/view_model/lesson_viewmodel.dart';
-import 'package:english_learning_app/views/screens/student/exam_screen.dart';
-import 'package:english_learning_app/views/screens/student/lesson_screen.dart';
 import 'package:english_learning_app/views/widget/tab/exam_list_tab.dart';
 import 'package:english_learning_app/views/widget/tab/lesson_list_tab.dart';
 import 'package:english_learning_app/views/widget/tab/statistics_score_tab.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
+
+import '../../../localization/app_localizations.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   final int courseId;
@@ -23,7 +17,8 @@ class CourseDetailScreen extends StatefulWidget {
   _CourseDetailState createState() => _CourseDetailState();
 }
 
-class _CourseDetailState extends State<CourseDetailScreen> with SingleTickerProviderStateMixin {
+class _CourseDetailState extends State<CourseDetailScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -31,7 +26,6 @@ class _CourseDetailState extends State<CourseDetailScreen> with SingleTickerProv
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
   }
-
 
   @override
   void dispose() {
@@ -41,29 +35,29 @@ class _CourseDetailState extends State<CourseDetailScreen> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-
-        title: Text(widget.courseName, style: TextStyle(color: Colors.white.withOpacity(0.8)),),
+        title: Text(
+          widget.courseName,
+          style: TextStyle(color: Colors.white.withOpacity(0.8)),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Colors.white, // Màu chữ cho tab được chọn
-          unselectedLabelColor: Colors.grey, // Màu chữ cho tab không được chọn
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.grey,
           labelStyle: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-          ), // Kiểu chữ cho tab được chọn
-          unselectedLabelStyle: TextStyle(
-            fontSize: 16,
-          ), // Kiểu chữ cho tab không được chọn
-          indicatorColor: Colors.white, // Màu của thanh chỉ báo tab
+          ),
+          unselectedLabelStyle: TextStyle(fontSize: 16),
+          indicatorColor: Colors.white,
           tabs: [
-            Tab(text: 'Bài học'),
-            Tab(text: 'Bài thi'),
-            Tab(text: 'Thống kê'),
+            Tab(text: loc.tr("lessons")), // Bài học
+            Tab(text: loc.tr("exams")), // Bài thi
+            Tab(text: loc.tr("statistics")), // Thống kê
           ],
         ),
         backgroundColor: AppColors.primaryDark,
@@ -80,5 +74,3 @@ class _CourseDetailState extends State<CourseDetailScreen> with SingleTickerProv
     );
   }
 }
-
-

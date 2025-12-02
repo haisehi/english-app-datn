@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import '../../../localization/app_localizations.dart';
+
 
 class Practice2Screen extends StatelessWidget {
   final List<VocabularyModel> _vocabList;
@@ -19,11 +21,12 @@ class Practice2Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return ChangeNotifierProvider(
       create: (_) => Practice2ViewModel(_vocabList, courseID, lessonID, old_process),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Bài luyện tập số 2', style: TextStyle(color: AppColors.textSecondary.withOpacity(0.8)),),
+          title: Text('${loc.tr("exercises")} 2', style: TextStyle(color: AppColors.textSecondary.withOpacity(0.8)),),
           backgroundColor: AppColors.primaryDark,
           iconTheme: IconThemeData(color: AppColors.textSecondary),
         ),
@@ -46,7 +49,7 @@ class Practice2Screen extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Câu ${viewModel.currentQuestionIndex + 1}/${viewModel.quizQuestions.length}',
+                      '${loc.tr("sentence")} ${viewModel.currentQuestionIndex + 1}/${viewModel.quizQuestions.length}',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
@@ -60,7 +63,7 @@ class Practice2Screen extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Nghĩa của từ:',
+                      '${loc.tr("meaning_of_the_word")}:',
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primaryDark),
                       textAlign: TextAlign.center,
                     ),

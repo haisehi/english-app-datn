@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart'; // Thêm thư viện lottie
 import 'package:english_learning_app/view_model/practice_4_viewmodel.dart';
 
+import '../../../localization/app_localizations.dart';
+
 class Practice4Screen extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
   final List<VocabularyModel> _vocabList;
@@ -18,13 +20,15 @@ class Practice4Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return ChangeNotifierProvider(
       create: (_) => Practice4ViewModel(_vocabList, courseID, lessonID, old_process),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Bài luyện tập số 4', style: TextStyle(color: AppColors.textSecondary.withOpacity(0.8)),),
+          title: Text('${loc.tr("exercises")} 4', style: TextStyle(color: AppColors.background.withOpacity(0.8)),),
           backgroundColor: AppColors.primaryDark,
-          iconTheme: IconThemeData(color: AppColors.textSecondary),
+          iconTheme: IconThemeData(color: AppColors.background),
 
         ),
         backgroundColor: AppColors.background,
@@ -49,7 +53,7 @@ class Practice4Screen extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Câu ${viewModel.currentIndex + 1}/${viewModel.totalQuestions}',
+                        '${loc.tr("sentence")} ${viewModel.currentIndex + 1}/${viewModel.totalQuestions}',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
@@ -64,12 +68,12 @@ class Practice4Screen extends StatelessWidget {
                       ),
                       SizedBox(height: 20),
                       Text(
-                        'Nghĩa của từ:',
+                        '${loc.tr("meaning_of_the_word")}:',
                         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 10),
                       Container(
-                        
+
                         decoration: BoxDecoration(
                           color: AppColors.Orange,
                           borderRadius: BorderRadius.circular(12)
@@ -88,7 +92,7 @@ class Practice4Screen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Trả lời: ", style: TextStyle(color: Color(0xFF342771),fontSize: 18, fontWeight: FontWeight.bold), ),
+                          Text("${loc.tr("answer")}: ", style: TextStyle(color: Color(0xFF342771),fontSize: 18, fontWeight: FontWeight.bold), ),
                           SizedBox(height: 10),
                           TextField(
                             controller: _controller,
@@ -118,9 +122,9 @@ class Practice4Screen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12), // Bo góc cho nút
                             ),
                           ),
-                          child: const Padding(
+                          child: Padding(
                             padding: EdgeInsets.all(12.0),
-                            child: Text('Trả lời', style: TextStyle(fontSize: 18, color: Colors.white),
+                            child: Text("${loc.tr("answer")}: ", style: TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ),
@@ -130,9 +134,9 @@ class Practice4Screen extends StatelessWidget {
                         viewModel.feedbackText,
                         style: TextStyle(
                           fontSize: 18,
-                          color: viewModel.feedbackText == "Chính xác!"
-                              ? Colors.green
-                              : Colors.red,
+                          color: viewModel.feedbackText == "${loc.tr("Right")}!"
+                              ? Colors.red
+                              : Colors.green,
                           fontWeight: FontWeight.bold
                         ),
 

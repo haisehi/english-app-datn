@@ -9,15 +9,29 @@ class SettingScreen extends StatelessWidget {
     var loc = AppLocalizations.of(context);
     final provider = Provider.of<LocaleProvider>(context);
 
+    // Hàm lấy tên ngôn ngữ theo locale
+    String getLanguageName(String code) {
+      switch (code) {
+        case "vi":
+          return "Tiếng Việt";
+        case "en":
+          return "English";
+        case "ja":
+          return "日本語";
+        case "ko":
+          return "한국어";
+        default:
+          return "English";
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(loc.tr("setting"))),
       body: Column(
         children: [
           ListTile(
             title: Text(loc.tr("choose_language")),
-            subtitle: Text(provider.locale.languageCode == "vi"
-                ? "Tiếng Việt"
-                : "English"),
+            subtitle: Text(getLanguageName(provider.locale.languageCode)),
             onTap: () {
               showModalBottomSheet(
                 context: context,
@@ -25,12 +39,20 @@ class SettingScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ListTile(
-                      title: const Text("Tiếng Việt"),
+                      title: Text(getLanguageName("vi")),
                       onTap: () => provider.setLocale(const Locale('vi')),
                     ),
                     ListTile(
-                      title: const Text("English"),
+                      title: Text(getLanguageName("en")),
                       onTap: () => provider.setLocale(const Locale('en')),
+                    ),
+                    ListTile(
+                      title: Text(getLanguageName("ja")),
+                      onTap: () => provider.setLocale(const Locale('ja')),
+                    ),
+                    ListTile(
+                      title: Text(getLanguageName("ko")),
+                      onTap: () => provider.setLocale(const Locale('ko')),
                     ),
                   ],
                 ),

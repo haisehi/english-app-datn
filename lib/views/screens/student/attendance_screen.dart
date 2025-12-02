@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../localization/app_localizations.dart';
+
 class AttendanceScreen extends StatefulWidget {
   final int userId;
   const AttendanceScreen({Key? key, required this.userId}) : super(key: key);
@@ -41,7 +43,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     return Consumer<AttendanceViewModel>(
       builder: (context, viewModel, child) {
-        /// ✅ Chuyển chuỗi ngày về dạng DateTime
+        /// Chuyển chuỗi ngày về dạng DateTime
         final attendedDays = viewModel.history.map((att) {
           try {
             return DateTime.parse(att.attendanceDate);
@@ -52,16 +54,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         }).toList();
 
         print("✅ attendedDays: $attendedDays"); // Debug log
-
+        final loc = AppLocalizations.of(context)!;
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
             centerTitle: true,
-            title: const Text(
-              "Điểm danh học tập",
-              style: TextStyle(
+            title: Text(
+              loc.tr("attendance_title"),
+              style: const TextStyle(
                 color: primaryColor,
                 fontWeight: FontWeight.bold,
               ),
@@ -101,8 +103,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 Text(
                   _hasMarkedToday
-                      ? "🎉 Hôm nay bạn đã điểm danh rồi!"
-                      : "Chúc mừng bạn hoàn thành bài học hôm nay!",
+                      ? "🎉 ${loc.tr("already_checked_in")}"
+                      : loc.tr("congratulations_study"),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 20,
@@ -124,7 +126,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         color: primaryColor.withOpacity(0.4)),
                   ),
                   child: Text(
-                    "🔥 Chuỗi học liên tiếp: ${viewModel.streak} ngày",
+                    "🔥 ${loc.tr("continuous_streak")}: ${viewModel.streak} ${loc.tr("days")}",
                     style: const TextStyle(
                       fontSize: 18,
                       color: primaryColor,
@@ -144,17 +146,17 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       await viewModel.markAttendance(widget.userId);
                       await _loadAttendanceData();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Điểm danh thành công!"),
+                        SnackBar(
+                          content: Text(loc.tr("check_in_success")),
                           backgroundColor: Colors.green,
                         ),
                       );
                     },
                     icon: const Icon(Icons.check_circle_outline,
                         color: Colors.white),
-                    label: const Text(
-                      "Điểm danh hôm nay",
-                      style: TextStyle(color: Colors.white),
+                    label: Text(
+                      loc.tr("check_in_today"),
+                      style: const TextStyle(color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
@@ -174,9 +176,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.arrow_back_ios_new,
                         color: Colors.white),
-                    label: const Text(
-                      "Quay về",
-                      style: TextStyle(color: Colors.white),
+                    label: Text(
+                      loc.tr("go_back"),
+                      style: const TextStyle(color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
@@ -195,17 +197,17 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 const SizedBox(height: 40),
 
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "📅 Lịch sử điểm danh:",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "📅 ${loc.tr("attendance_history")}",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
                   ),
                 ),
+              ),
                 const SizedBox(height: 10),
 
                 Container(

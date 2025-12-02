@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import '../../../localization/app_localizations.dart';
+
 class LessonListTab extends StatefulWidget {
   final int courseID;
 
@@ -31,6 +33,7 @@ class _LessonListTabState extends State<LessonListTab> {
   @override
   Widget build(BuildContext context) {
     final lessonViewModel = Provider.of<LessonViewModel>(context);
+    final loc = AppLocalizations.of(context)!;
 
     return lessonViewModel.isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -82,7 +85,7 @@ class _LessonListTabState extends State<LessonListTab> {
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                              subtitle: Text('Cấp độ: ${lesson.level}'),
+                              subtitle: Text('${loc.tr("level")}: ${lesson.level}'),
                               trailing: Lottie.asset(
                                 'assets/animations/learn_icon.json',
                                 // Đảm bảo bạn đã thêm file JSON của Lottie trong thư mục assets

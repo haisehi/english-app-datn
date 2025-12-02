@@ -11,6 +11,7 @@ import 'package:english_learning_app/models/speaking_result_dto.dart';
 import 'package:english_learning_app/models/speaking_submit_response.dart';
 import 'package:english_learning_app/services/auth_service.dart';
 
+import '../../../localization/app_localizations.dart';
 import '../../../main.dart';
 import '../../component/speaking_wave.dart';
 import 'home_student_screen.dart';
@@ -207,6 +208,8 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final loc = AppLocalizations.of(context)!;
     if (isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -218,7 +221,7 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Luyện nói"),
+        title:  Text(loc.tr("lesson_speaking")),
         backgroundColor: const Color(0xFF2475FC),
       ),
       body: Padding(
@@ -291,8 +294,8 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
                   ),
                   child: Text(
                     currentIndex < sentences.length - 1
-                        ? "Câu tiếp theo"
-                        : "Hoàn thành bài học",
+                        ? "${loc.tr("next")}"
+                        : "${loc.tr("completed")}",
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                   ),

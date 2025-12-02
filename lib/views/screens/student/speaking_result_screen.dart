@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../models/speaking_result_dto.dart';
 import '../../../models/speaking_submit_response.dart';
 
@@ -17,9 +18,10 @@ class SpeakingResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Kết quả luyện nói"),
+        title: Text(loc.tr("result_speaking")),
         backgroundColor: const Color(0xFF2475FC),
       ),
       body: Padding(
@@ -29,7 +31,7 @@ class SpeakingResultScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             Text(
-              "Điểm: ${submitResponse.totalCorrect}/${submitResponse.totalSentences} "
+              "${loc.tr("score")}: ${submitResponse.totalCorrect}/${submitResponse.totalSentences} "
                   "(${submitResponse.percent}%)",
               style: const TextStyle(
                   fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF2475FC)),
@@ -69,8 +71,8 @@ class SpeakingResultScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      title: Text("Câu ${r.sentenceId}"),
-                      subtitle: Text("Bạn nói: ${r.userText}"),
+                      title: Text("${loc.tr("sentence")} ${r.sentenceId}"),
+                      subtitle: Text("${loc.tr("your_speak")}: ${r.userText}"),
                     ),
                   );
                 },
@@ -91,8 +93,8 @@ class SpeakingResultScreen extends StatelessWidget {
                 ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text(
-                "Quay về",
+              child:  Text(
+                loc.tr("back"),
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
             ),

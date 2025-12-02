@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:english_learning_app/constrants/app_constrants.dart';
 import 'package:english_learning_app/models/speaking_lesson_status.dart';
 import 'package:english_learning_app/services/auth_service.dart';
+import '../../../localization/app_localizations.dart';
 import 'speaking_sentence_screen.dart';
 
 class SpeakingLessonsScreen extends StatefulWidget {
@@ -39,8 +40,9 @@ class _SpeakingLessonsScreenState extends State<SpeakingLessonsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text("Lessons")),
+      appBar: AppBar(title: Text(loc.tr("lesson_speaking"))),
       body: FutureBuilder<List<SpeakingLessonStatus>>(
         future: fetchLessons(),
         builder: (context, snapshot) {

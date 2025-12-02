@@ -6,13 +6,11 @@ import 'package:english_learning_app/view_model/exam_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
+import '../../../localization/app_localizations.dart';
 
 class ExamScreen extends StatefulWidget {
   final ExamModel exam;
-
   final List<QuestionModel> questions;
-
 
   ExamScreen(this.exam, this.questions);
 
@@ -30,51 +28,50 @@ class _ExamScreenState extends State<ExamScreen> {
     viewModel.startCountdown(() {
       _onTimeUp();
     });
-
   }
+
   void _onTimeUp() {
     viewModel.calculateScore();
     _showResultDialog();
   }
 
   void _submitExam() async {
+    final loc = AppLocalizations.of(context)!;
     bool confirm = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Xác nhận nộp bài'),
-        content: Text('Bạn có chắc chắn muốn nộp bài không?'),
+        title: Text(loc.tr("confirm_submit_exam")),
+        content: Text(loc.tr("are_you_sure_submit")),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Hủy'),
+            child: Text(loc.tr("cancel")),
           ),
           ElevatedButton(
             onPressed: () async {
-
               viewModel.calculateScore();
-              ExamDetailViewmodel examDetailViewmodel = new ExamDetailViewmodel();
-              print(viewModel.totalScore);
+              ExamDetailViewmodel examDetailViewmodel = ExamDetailViewmodel();
               await examDetailViewmodel.updateScore(widget.exam.examID, viewModel.totalScore, 0, '');
               Navigator.pop(context, true);
             },
-            child: Text('Nộp bài'),
+            child: Text(loc.tr("submit_exam")),
           ),
         ],
       ),
     );
 
     if (confirm) {
-
       _showResultDialog();
     }
   }
 
   void _showResultDialog() {
+    final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Kết quả bài thi'),
-        content: Text('Bạn đã hoàn thành bài thi.\nTổng điểm: ${viewModel.totalScore}'),
+        title: Text(loc.tr("exam_result")),
+        content: Text('${loc.tr("completed_exam")}\n${loc.tr("total_score")}: ${viewModel.totalScore}'),
         actions: [
           ElevatedButton(
             onPressed: () {
@@ -96,11 +93,13 @@ class _ExamScreenState extends State<ExamScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.exam.examName, style: TextStyle(color: AppColors.textSecondary),),
+        title: Text(widget.exam.examName, style: TextStyle(color: AppColors.background)),
         backgroundColor: AppColors.primary,
-        iconTheme: IconThemeData(color: AppColors.textSecondary),
+        iconTheme: IconThemeData(color: AppColors.background),
         actions: [
           StreamBuilder<int>(
             stream: viewModel.countdownController.stream,
@@ -108,7 +107,9 @@ class _ExamScreenState extends State<ExamScreen> {
               final time = snapshot.data ?? viewModel.countdownTime;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Center(child: Text(viewModel.formatTime(time), style: TextStyle(color: AppColors.Orange),)),
+                child: Center(
+                  child: Text(viewModel.formatTime(time), style: TextStyle(color: AppColors.background)),
+                ),
               );
             },
           ),
@@ -132,10 +133,7 @@ class _ExamScreenState extends State<ExamScreen> {
                         children: [
                           Text(
                             '${index + 1}. ${question.content}',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                           ),
                           ...question.answerOptions.map(
                                 (answer) => RadioListTile<int>(
@@ -158,7 +156,6 @@ class _ExamScreenState extends State<ExamScreen> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
               children: [
                 if (viewModel.currentPage > 0)
                   ElevatedButton(
@@ -167,7 +164,7 @@ class _ExamScreenState extends State<ExamScreen> {
                         viewModel.previousPage();
                       });
                     },
-                    child: Text('Quay lại'),
+                    child: Text(loc.tr("previous")),
                   ),
                 if (!viewModel.isLastPage())
                   ElevatedButton(
@@ -176,12 +173,12 @@ class _ExamScreenState extends State<ExamScreen> {
                         viewModel.nextPage();
                       });
                     },
-                    child: Text('Tiếp theo'),
+                    child: Text(loc.tr("next")),
                   ),
                 if (viewModel.isLastPage())
                   ElevatedButton(
                     onPressed: _submitExam,
-                    child: Text('Nộp bài'),
+                    child: Text(loc.tr("submit_exam")),
                   ),
               ],
             ),

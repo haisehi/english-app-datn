@@ -9,6 +9,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../localization/app_localizations.dart';
+
 class LessonScreen extends StatefulWidget {
   final LessonModel lesson;
 
@@ -37,11 +39,12 @@ class _LessonDetailScreenState extends State<LessonScreen> {
   @override
   Widget build(BuildContext context) {
     final vocabularyViewModel = Provider.of<VocabularyViewmodel>(context);
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Chi tiết bài học',
+          loc.tr("lesson_detail"),
           style: TextStyle(color: Colors.white.withOpacity(0.8)),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -81,7 +84,7 @@ class _LessonDetailScreenState extends State<LessonScreen> {
             SizedBox(height: 16),
             // Danh sách từ vựng và nghĩa
             Text(
-              'Từ vựng',
+              loc.tr("vocabulary"),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
@@ -142,7 +145,7 @@ class _LessonDetailScreenState extends State<LessonScreen> {
                   );
                 },
                 child: Text(
-                  'Luyện tập',
+                  loc.tr("start"),
                   style: TextStyle(color: AppColors.background, fontSize: 16),
                 ),
                 style: ElevatedButton.styleFrom(

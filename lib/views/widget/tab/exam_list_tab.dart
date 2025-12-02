@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../localization/app_localizations.dart';
+
 class ExamListTab extends StatefulWidget {
   final int courseID;
 
@@ -35,6 +37,7 @@ class _ExamListTabState extends State<ExamListTab> {
   Widget build(BuildContext context) {
     // List<ExamModel> exams = widget.exams;
     final examViewModel = Provider.of<ExamListViewmodel>(context);
+    final loc = AppLocalizations.of(context)!;
 
     return examViewModel.isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -48,7 +51,7 @@ class _ExamListTabState extends State<ExamListTab> {
                   if (exam.status == 1) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Bạn không được phép làm bài thi này.'),
+                        content: Text('${loc.tr("error")}'),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -79,7 +82,7 @@ class _ExamListTabState extends State<ExamListTab> {
                             Icon(Icons.school, color: Colors.blue),
                             SizedBox(width: 8),
                             Text(
-                              'Tên bài thi: ${exam.examName}', // Hiển thị tên bài thi
+                              '${loc.tr("name_exam")}: ${exam.examName}', // Hiển thị tên bài thi
                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -88,10 +91,10 @@ class _ExamListTabState extends State<ExamListTab> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Cấp độ: ${exam.level}'),
+                            Text('${loc.tr("level")}: ${exam.level}'),
                             if (exam.status == 1) // Kiểm tra trạng thái
                               Text(
-                                'Hết lượt thi',
+                                '${loc.tr("end_of_exam")}',
                                 style: TextStyle(
                                   color: Colors.red, // Màu nổi bật
                                   fontWeight: FontWeight.bold,
@@ -99,13 +102,13 @@ class _ExamListTabState extends State<ExamListTab> {
                               ),
                           ],
                         ),
-                        Text('Thời gian: ${exam.examTime}'),
+                        Text('${loc.tr("time")}: ${exam.examTime}'),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Ngày hết hạn: ${exam.examDate}'),
+                            Text('${loc.tr("end_of_day")}: ${exam.examDate}'),
                             Text(
-                              'Điểm số: ${exam.myScore}/100',
+                              '${loc.tr("score")}: ${exam.myScore}/100',
                               style: TextStyle(
                                 color: AppColors.Orange,
                                 fontWeight: FontWeight.bold,

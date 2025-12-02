@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:english_learning_app/constrants/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 
 class PracticeScreenTest extends StatefulWidget {
   @override
@@ -26,17 +28,22 @@ class _VocabPracticeScreenState extends State<PracticeScreenTest> {
   String _feedbackText = "";
   bool _isAnswerCorrect = false;
 
+  late AppLocalizations loc;
+
   @override
   void initState() {
     super.initState();
-    _resetQuiz();
+    Future.microtask(() {
+      loc = AppLocalizations.of(context)!;
+      _resetQuiz();
+    });
   }
 
   void _resetQuiz() {
     setState(() {
       _score = 0;
       _currentQuestion = 1;
-      _remainingWords = List.from(_vocabList)..shuffle();  // Tạo danh sách từ ngẫu nhiên
+      _remainingWords = List.from(_vocabList)..shuffle();
       _totalQuestions = _vocabList.length;
       _nextWord();
     });
@@ -49,7 +56,7 @@ class _VocabPracticeScreenState extends State<PracticeScreenTest> {
     }
 
     setState(() {
-      _currentWord = _remainingWords.removeAt(0);  // Lấy từ tiếp theo trong danh sách
+      _currentWord = _remainingWords.removeAt(0);
       _currentMeanings = [_currentWord!['meaning']!, _getRandomMeaning()];
       _currentMeanings.shuffle();
       _targetColor = Colors.lightBlueAccent;
@@ -67,16 +74,15 @@ class _VocabPracticeScreenState extends State<PracticeScreenTest> {
       if (chosenMeaning == _currentWord!['meaning']) {
         _score++;
         _targetColor = Colors.green;
-        _feedbackText = "Chính xác!";
+        _feedbackText = loc.tr("correct");
         _isAnswerCorrect = true;
       } else {
         _targetColor = Colors.red;
-        _feedbackText = "Sai rồi!";
+        _feedbackText = loc.tr("wrong");
         _isAnswerCorrect = false;
       }
     });
 
-    // Đợi một khoảng thời gian rồi chuyển sang câu tiếp theo
     Future.delayed(Duration(seconds: 1), () {
       setState(() {
         _currentQuestion++;
@@ -89,15 +95,15 @@ class _VocabPracticeScreenState extends State<PracticeScreenTest> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Hoàn thành"),
-        content: Text("Bạn đã hoàn thành bài luyện tập!\nĐiểm của bạn: $_score/$_totalQuestions"),
+        title: Text(loc.tr("completed")),
+        content: Text('${loc.tr("quiz_completed")}\n${loc.tr("score")}: $_score/$_totalQuestions'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _resetQuiz();
             },
-            child: Text("Làm lại"),
+            child: Text(loc.tr("retry")),
           ),
         ],
       ),
@@ -106,19 +112,20 @@ class _VocabPracticeScreenState extends State<PracticeScreenTest> {
 
   @override
   Widget build(BuildContext context) {
+    loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Luyện tập từ vựng'),
+        title: Text(loc.tr("vocab_practice"), style: TextStyle(color: AppColors.background),),
         centerTitle: true,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Kéo từ vào nghĩa phù hợp", style: TextStyle(fontSize: 20)),
+          Text(loc.tr("drag_to_match"), style: TextStyle(fontSize: 20)),
           SizedBox(height: 20),
-          Text("Câu $_currentQuestion / $_totalQuestions", style: TextStyle(fontSize: 18)),
+          Text('${loc.tr("question")} $_currentQuestion / $_totalQuestions', style: TextStyle(fontSize: 18)),
           SizedBox(height: 20),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: _currentMeanings.map((meaning) {
@@ -142,9 +149,7 @@ class _VocabPracticeScreenState extends State<PracticeScreenTest> {
               );
             }).toList(),
           ),
-
           SizedBox(height: 20),
-
           Draggable<String>(
             data: _currentWord!['meaning'],
             feedback: Container(
@@ -162,9 +167,8 @@ class _VocabPracticeScreenState extends State<PracticeScreenTest> {
               child: Text(_currentWord!['word']!, style: TextStyle(fontSize: 18, color: Colors.white)),
             ),
           ),
-
           SizedBox(height: 20),
-          Text("Điểm: $_score", style: TextStyle(fontSize: 20)),
+          Text('${loc.tr("score")}: $_score', style: TextStyle(fontSize: 20)),
         ],
       ),
     );

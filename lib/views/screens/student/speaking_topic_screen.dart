@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:english_learning_app/constrants/app_constrants.dart';
 import 'package:english_learning_app/models/speaking_topic.dart';
+import '../../../localization/app_localizations.dart';
 import 'speaking_lessons_screen.dart';
 
 class SpeakingTopicScreen extends StatefulWidget {
@@ -26,8 +27,9 @@ class _SpeakingTopicScreenState extends State<SpeakingTopicScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text("Speaking Topics")),
+      appBar: AppBar(title: Text(loc.tr("speaking_topic"))),
       body: FutureBuilder<List<SpeakingTopic>>(
         future: fetchTopics(),
         builder: (context, snapshot) {
