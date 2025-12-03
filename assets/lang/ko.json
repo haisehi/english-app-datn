@@ -113,5 +113,6 @@
 "no_available_course": "사용 가능한 강좌 없음",
 "max": "최대",
 "join": "참여",
-"day": "일"
+"day": "일",
+  "dark_mode": "다크 모드"
 }

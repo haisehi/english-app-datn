@@ -113,5 +113,6 @@
   "no_available_course": "利用可能なコースなし",
   "max": "最大",
   "join": "参加",
-  "day": "日"
+  "day": "日",
+  "dark_mode": "ダークモード"
 }

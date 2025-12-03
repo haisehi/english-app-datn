@@ -1,9 +1,7 @@
+import 'dart:ui';
 import 'package:english_learning_app/constrants/app_colors.dart';
-import 'package:english_learning_app/models/course_model.dart';
 import 'package:english_learning_app/view_model/my_course_viewmodel.dart';
 import 'package:english_learning_app/views/screens/student/course_detail_screen.dart';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,99 +23,160 @@ class _CourseScreenState extends State<CourseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final courseViewModel = Provider.of<MyCourseViewmodel>(context);
+    final courseVM = Provider.of<MyCourseViewmodel>(context);
     final loc = AppLocalizations.of(context)!;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            loc.tr("my_courses"),
-            style: TextStyle(color: Colors.white.withOpacity(0.8)),
-          ),
-          backgroundColor: AppColors.primaryDark,
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text(
+          loc.tr("my_courses"),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        body: courseViewModel.isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Container(
-          decoration: BoxDecoration(color: AppColors.background),
-          child: courseViewModel.courses.isEmpty
-              ? Center(
-            child: Text(
-              loc.tr("no_course"),
-              style: TextStyle(color: AppColors.textPrimary),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF2475FC), Color(0xFF002275)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: courseVM.isLoading
+            ? const Center(child: CircularProgressIndicator(color: Colors.white))
+            : courseVM.courses.isEmpty
+            ? Center(
+          child: Text(
+            loc.tr("no_course"),
+            style: const TextStyle(color: Colors.white70, fontSize: 18),
+          ),
+        )
+            : ListView.separated(
+          padding: const EdgeInsets.only(top: 100, bottom: 20),
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemCount: courseVM.courses.length,
+          itemBuilder: (context, index) {
+            final course = courseVM.courses[index];
+
+            return _CourseCard(
+              title: course.courseName,
+              status: course.courseStatus,
+              maxQuantity: course.maxQuantity,
+              progress: (course.maxQuantity > 0) ? (0.7) : 0,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CourseDetailScreen(
+                      courseId: course.courseID,
+                      courseName: course.courseName,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _CourseCard extends StatelessWidget {
+  final String title;
+  final String status;
+  final int maxQuantity;
+  final double progress;
+  final VoidCallback onTap;
+
+  const _CourseCard({
+    required this.title,
+    required this.status,
+    required this.maxQuantity,
+    required this.progress,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
             ),
-          )
-              : ListView.builder(
-            itemCount: courseViewModel.courses.length,
-            itemBuilder: (context, index) {
-              final course = courseViewModel.courses[index];
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Color(0xFF342771).withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Card(
-                  elevation: 5,
-                  shadowColor: Color(0xFF4A4E69),
-                  color: AppColors.primary,
-                  margin: EdgeInsets.all(2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    title: Text(
-                      course.courseName,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white.withOpacity(0.8),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(18),
+                onTap: onTap,
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 55,
+                        width: 55,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.menu_book_rounded, color: Colors.white),
                       ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 5),
-                        Text(
-                          "${loc.tr("status")}: ${course.courseStatus}",
-                          style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              "Status: $status",
+                              style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                            ),
+                            Text(
+                              "Max: $maxQuantity",
+                              style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(30),
+                              child: LinearProgressIndicator(
+                                value: progress,
+                                minHeight: 6,
+                                backgroundColor: Colors.white.withOpacity(0.25),
+                                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFFC857)),
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          '${loc.tr("max_student")}: ${course.maxQuantity}',
-                          style: TextStyle(
-                              color: Colors.white.withOpacity(0.7)),
-                        ),
-                        SizedBox(height: 5),
-                        LinearProgressIndicator(
-                          value: 80 / 100,
-                          minHeight: 4,
-                          backgroundColor: AppColors.background,
-                          color: AppColors.Orange,
-                        ),
-                      ],
-                    ),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      color: AppColors.background,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CourseDetailScreen(
-                            courseId: course.courseID,
-                            courseName: course.courseName,
-                          ),
-                        ),
-                      );
-                    },
+                      ),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white54, size: 18),
+                    ],
                   ),
                 ),
-              );
-            },
+              ),
+            ),
           ),
         ),
       ),
