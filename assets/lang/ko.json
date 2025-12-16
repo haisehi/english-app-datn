@@ -114,5 +114,10 @@
 "max": "최대",
 "join": "참여",
 "day": "일",
-  "dark_mode": "다크 모드"
+  "dark_mode": "다크 모드",
+
+  "chat_ai": "AI 채팅",
+  "ai_welcome": "안녕하세요! 저는 MeoV AI 🤖입니다. 무엇을 도와드릴까요?",
+  "ai_not_understand": "죄송해요, 말씀하신 내용을 잘 이해하지 못했어요 😢",
+  "common_error": "오류가 발생했습니다. 잠시 후 다시 시도해주세요!"
 }

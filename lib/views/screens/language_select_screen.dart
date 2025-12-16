@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constrants/app_colors.dart';
+import '../../localization/locale_provider.dart';
 
 class LanguageSelectScreen extends StatelessWidget {
   const LanguageSelectScreen({super.key});
 
   Future<void> _saveLanguage(BuildContext context, String code) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language_code', code);
+    final localeProvider = Provider.of<LocaleProvider>(
+      context,
+      listen: false,
+    );
+
+    localeProvider.setLocale(Locale(code));
 
     Navigator.pushReplacementNamed(context, '/login');
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constrants/app_colors.dart';
+import 'login_screen.dart';
 import 'language_select_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -12,6 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _checkedAuth = false;
 
   final List<_SplashContent> _pages = [
     _SplashContent(
@@ -36,6 +39,28 @@ class _SplashScreenState extends State<SplashScreen> {
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _checkAuth();
+  }
+
+  /// 🔐 CHECK LOGIN STATE
+  Future<void> _checkAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+
+    if (token != null && token.isNotEmpty) {
+      // Đã login → vào thẳng app
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, '/student');
+      });
+    } else {
+      // Chưa login → show onboarding
+      setState(() => _checkedAuth = true);
+    }
+  }
+
   void _nextPage() {
     if (_currentPage < _pages.length - 1) {
       setState(() => _currentPage++);
@@ -51,15 +76,15 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    if (!_checkedAuth) {
+      // ⏳ Đợi check login
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final bool isLastPage = _currentPage == _pages.length - 1;
 
     return Scaffold(
@@ -80,10 +105,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
-                    Image.asset(
-                      content.image,
-                      height: 200,
-                    ),
+                    Image.asset(content.image, height: 200),
                     const SizedBox(height: 40),
                     Text(
                       content.title,
@@ -92,7 +114,6 @@ class _SplashScreenState extends State<SplashScreen> {
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -107,31 +128,25 @@ class _SplashScreenState extends State<SplashScreen> {
                 );
               },
             ),
-
-            // Nút ở giữa phía dưới
             Positioned(
               bottom: 40,
               left: 24,
               right: 24,
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _nextPage,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+              child: ElevatedButton(
+                onPressed: _nextPage,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    isLastPage ? 'START' : 'CONTINUE',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.background,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                child: Text(
+                  isLastPage ? 'START' : 'CONTINUE',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: AppColors.background,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

@@ -114,5 +114,10 @@
   "max": "Max",
   "join": "Join",
   "day": "day",
-  "dark_mode": "Dark Mode"
+  "dark_mode": "Dark Mode",
+
+  "chat_ai": "AI Chat",
+  "ai_welcome": "Hi! I'm MeoV AI 🤖. How can I help you today?",
+  "ai_not_understand": "Sorry, I didn't quite understand that 😢",
+  "common_error": "Something went wrong. Please try again later!"
 }

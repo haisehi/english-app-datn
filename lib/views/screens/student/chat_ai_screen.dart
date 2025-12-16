@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 
+import '../../../localization/app_localizations.dart';
+
 class ChatAiScreen extends StatefulWidget {
   @override
   _ChatAiScreenState createState() => _ChatAiScreenState();
@@ -14,24 +16,25 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
   final ChatUser _user = ChatUser(
     id: 'user',
     firstName: 'User',
-    profileImage: 'assets/images/image1.jpg', // avatar user
+    profileImage: 'assets/images/image1.jpg',
   );
 
   final ChatUser _bot = ChatUser(
     id: 'bot',
     firstName: 'MeoV AI',
-    profileImage: 'assets/images/logo.png', // avatar bot
+    profileImage: 'assets/images/logo.png',
   );
-
-  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Gửi tin nhắn chào từ AI khi mở màn hình
-    Future.delayed(Duration(milliseconds: 300), () {
-      final ChatMessage welcomeMessage = ChatMessage(
-        text: 'Xin chào! Mình là MeoV AI 🤖. Mình có thể giúp gì cho bạn hôm nay?',
+
+    /// ⚠️ Không dùng context trực tiếp trong initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final loc = AppLocalizations.of(context)!;
+
+      final welcomeMessage = ChatMessage(
+        text: loc.tr("ai_welcome"),
         user: _bot,
         createdAt: DateTime.now(),
       );
@@ -43,7 +46,9 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
   }
 
   void _sendMessage(String message) async {
-    final ChatMessage userMessage = ChatMessage(
+    final loc = AppLocalizations.of(context)!;
+
+    final userMessage = ChatMessage(
       text: message,
       user: _user,
       createdAt: DateTime.now(),
@@ -58,8 +63,8 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
         Part.text(message),
       ]);
 
-      final ChatMessage botMessage = ChatMessage(
-        text: response?.output ?? 'Xin lỗi, mình chưa hiểu bạn nói gì 😢',
+      final botMessage = ChatMessage(
+        text: response?.output ?? loc.tr("ai_not_understand"),
         user: _bot,
         createdAt: DateTime.now(),
       );
@@ -68,8 +73,8 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
         _messages.insert(0, botMessage);
       });
     } catch (e) {
-      final ChatMessage errorMessage = ChatMessage(
-        text: 'Đã xảy ra lỗi. Vui lòng thử lại sau!',
+      final errorMessage = ChatMessage(
+        text: loc.tr("common_error"),
         user: _bot,
         createdAt: DateTime.now(),
       );
@@ -82,29 +87,24 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Chat AI',
+          loc.tr("chat_ai"),
           style: TextStyle(color: AppColors.background.withOpacity(0.8)),
         ),
         backgroundColor: AppColors.primaryDark,
         iconTheme: IconThemeData(color: AppColors.background),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: DashChat(
-              messages: _messages,
-              currentUser: _user,
-              onSend: (ChatMessage message) {
-                _controller.clear();
-                _sendMessage(message.text);
-              },
-            ),
-          ),
-        ],
+      body: DashChat(
+        messages: _messages,
+        currentUser: _user,
+        onSend: (ChatMessage message) {
+          _sendMessage(message.text);
+        },
       ),
     );
   }

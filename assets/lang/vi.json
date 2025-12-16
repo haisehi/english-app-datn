@@ -114,5 +114,10 @@
   "max": "Tối đa",
   "join": "Tham gia",
   "day": "ngày",
-  "dark_mode": "Chế độ tối"
+  "dark_mode": "Chế độ tối",
+
+  "chat_ai": "Chat AI",
+  "ai_welcome": "Xin chào! Mình là MeoV AI 🤖. Mình có thể giúp gì cho bạn hôm nay?",
+  "ai_not_understand": "Xin lỗi, mình chưa hiểu bạn nói gì 😢",
+  "common_error": "Đã xảy ra lỗi. Vui lòng thử lại sau!"
 }

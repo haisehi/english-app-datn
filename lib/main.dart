@@ -1,6 +1,7 @@
 import 'package:english_learning_app/constrants/app_constrants.dart';
 import 'package:english_learning_app/models/exam_model.dart';
 import 'package:english_learning_app/models/vocabulary_model.dart';
+import 'package:english_learning_app/services/notification_service.dart';
 import 'package:english_learning_app/view_model/exam_detail_viewmodel.dart';
 import 'package:english_learning_app/view_model/exam_list_viewmodel.dart';
 import 'package:english_learning_app/view_model/lesson_viewmodel.dart';
@@ -37,6 +38,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
+  await NotificationService.init();
   Gemini.init(apiKey: GEMINI_API_KEY);
   runApp(
     MultiProvider(

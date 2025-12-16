@@ -131,4 +131,15 @@ class AuthService {
     return prefs.getString("access_token");
   }
 
+  Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+
+    if (token == null || token.isEmpty) return false;
+
+    // (optional nâng cao) có thể decode JWT để check expiry
+    return true;
+  }
+
+
 }
