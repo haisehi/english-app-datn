@@ -10,6 +10,8 @@
 .svn/
 migrate_working_dir/
 
+lib/constrants/app_constrants.dart
+
 # IntelliJ related
 *.iml
 *.ipr

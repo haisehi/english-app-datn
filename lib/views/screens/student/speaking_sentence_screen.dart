@@ -27,6 +27,7 @@ class SpeakingSentenceScreen extends StatefulWidget {
 
 class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
   late stt.SpeechToText speech;
+
   List<SpeakingSentence> sentences = [];
   int currentIndex = 0;
 
@@ -38,10 +39,12 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
   Color feedbackColor = Colors.red;
   bool canNext = false;
 
+  List<bool> wordResults = []; // true = đúng, false = sai
   List<SpeakingResultDTO> speakingResults = [];
+
   final AuthService _authService = AuthService();
 
-  // Animation Lottie
+  // Lottie animations
   final List<String> animations = [
     "assets/animations2/Audio Translation.json",
     "assets/animations2/Cat playing animation.json",
@@ -56,6 +59,8 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     speech = stt.SpeechToText();
     fetchSentences().then((_) => pickRandomAnimation());
   }
+
+  // ================= API =================
 
   Future<void> fetchSentences() async {
     try {
@@ -79,6 +84,8 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     }
   }
 
+  // ================= SPEECH =================
+
   Future<void> startListening() async {
     bool available = await speech.initialize();
     if (!available) return;
@@ -87,6 +94,7 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
       isListening = true;
       recognizedText = "";
       feedbackMessage = "";
+      wordResults.clear();
       canNext = false;
     });
 
@@ -103,14 +111,34 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     setState(() => isListening = false);
 
     if (recognizedText.isNotEmpty) {
+      compareWords(sentences[currentIndex].sentenceEn, recognizedText);
       await compareSentenceAPI();
     }
   }
 
-  // gọi API /compare
+  // ================= COMPARE =================
+
+  void compareWords(String correctSentence, String userSentence) {
+    final correctWords =
+    correctSentence.toLowerCase().split(RegExp(r"\s+"));
+    final userWords =
+    userSentence.toLowerCase().split(RegExp(r"\s+"));
+
+    wordResults = [];
+
+    for (int i = 0; i < correctWords.length; i++) {
+      if (i < userWords.length && correctWords[i] == userWords[i]) {
+        wordResults.add(true);
+      } else {
+        wordResults.add(false);
+      }
+    }
+  }
+
   Future<void> compareSentenceAPI() async {
     final currentSentence = sentences[currentIndex];
     final token = await _authService.getAccessToken();
+
     final body = {
       "sentenceId": currentSentence.id,
       "userText": recognizedText,
@@ -126,14 +154,15 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     );
 
     if (res.statusCode == 200) {
-      final data = SpeakingCompareResponse.fromJson(jsonDecode(res.body));
+      final data =
+      SpeakingCompareResponse.fromJson(jsonDecode(res.body));
+
       setState(() {
         feedbackMessage = data.feedback;
         feedbackColor = data.correct ? Colors.green : Colors.red;
         canNext = true;
       });
 
-      // Lưu vào danh sách kết quả để submit sau
       speakingResults.add(
         SpeakingResultDTO(
           sentenceId: currentSentence.id,
@@ -149,10 +178,40 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     }
   }
 
+  // ================= UI HELPERS =================
+
   void pickRandomAnimation() {
     final random = Random();
     currentAnimation = animations[random.nextInt(animations.length)];
   }
+
+  Widget buildHighlightedSentence(String sentence) {
+    final words = sentence.split(" ");
+
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        children: List.generate(words.length, (index) {
+          Color color = const Color(0xFF2475FC);
+
+          if (wordResults.isNotEmpty && index < wordResults.length) {
+            color = wordResults[index] ? Colors.green : Colors.red;
+          }
+
+          return TextSpan(
+            text: "${words[index]} ",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  // ================= NAV =================
 
   void nextSentence() {
     if (currentIndex < sentences.length - 1) {
@@ -161,14 +220,15 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
         recognizedText = "";
         feedbackMessage = "";
         canNext = false;
+        wordResults.clear();
         pickRandomAnimation();
       });
     }
   }
 
-  // gọi API /submit
   Future<void> submitLessonResult() async {
     final token = await _authService.getAccessToken();
+
     final body = {
       "lessonId": widget.lessonId,
       "results": speakingResults.map((e) => e.toJson()).toList(),
@@ -184,21 +244,23 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     );
 
     if (res.statusCode == 200) {
-      final data = SpeakingSubmitResponse.fromJson(jsonDecode(res.body));
+      final data =
+      SpeakingSubmitResponse.fromJson(jsonDecode(res.body));
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => SpeakingResultScreen(
             results: speakingResults,
-            returnTo: StudentNavigation(), // <-- thay đổi đây
+            returnTo: StudentNavigation(),
             submitResponse: data,
           ),
         ),
       );
-
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Submit thất bại!")));
+        const SnackBar(content: Text("Submit thất bại!")),
+      );
     }
   }
 
@@ -206,10 +268,12 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     await submitLessonResult();
   }
 
+  // ================= BUILD =================
+
   @override
   Widget build(BuildContext context) {
-
     final loc = AppLocalizations.of(context)!;
+
     if (isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -221,7 +285,7 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title:  Text(loc.tr("lesson_speaking")),
+        title: Text(loc.tr("lesson_speaking")),
         backgroundColor: const Color(0xFF2475FC),
       ),
       body: Padding(
@@ -230,7 +294,10 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
           children: [
             Text(
               "Câu ${currentIndex + 1}/${sentences.length}",
-              style: const TextStyle(fontSize: 18, color: Color(0xFF2475FC)),
+              style: const TextStyle(
+                fontSize: 18,
+                color: Color(0xFF2475FC),
+              ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -244,15 +311,7 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
                   ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Text(
-                    current.sentenceEn,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2475FC),
-                    ),
-                  ),
+                  child: buildHighlightedSentence(current.sentenceEn),
                 ),
               ],
             ),
@@ -260,7 +319,8 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
             SpeakingWave(active: isListening),
             const SizedBox(height: 16),
             FloatingActionButton(
-              backgroundColor: isListening ? Colors.red : const Color(0xFF2475FC),
+              backgroundColor:
+              isListening ? Colors.red : const Color(0xFF2475FC),
               onPressed: isListening ? stopListening : startListening,
               child: Icon(isListening ? Icons.mic : Icons.mic_none),
             ),
@@ -294,10 +354,13 @@ class _SpeakingSentenceScreenState extends State<SpeakingSentenceScreen> {
                   ),
                   child: Text(
                     currentIndex < sentences.length - 1
-                        ? "${loc.tr("next")}"
-                        : "${loc.tr("completed")}",
+                        ? loc.tr("next")
+                        : loc.tr("completed"),
                     style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

@@ -95,7 +95,7 @@ class Practice1Viewmodel extends ChangeNotifier {
     });
   }
 
-  // ✅ Hiển thị kết quả + chuyển sang trang điểm danh
+  //  Hiển thị kết quả + chuyển sang trang điểm danh
   void showResult(BuildContext context) async {
     double completionRate = (score / _vocabList.length) * 100;
     bool isCompleted = completionRate >= 80;
